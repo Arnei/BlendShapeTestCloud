@@ -1,15 +1,29 @@
 fileFormatVersion: 2
-guid: 1661a50d0145bbf48bf40984664a9f00
+guid: b845bb865c370d54eaea95efd494c3c5
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2100000: lambert1
-    4300000: morphBasedMesh
+    100000: Target_Shapes
+    100002: //RootNode
+    100004: Victor_Head
+    100006: Victor_Head_Jnt
+    100008: Victor_Head_Tip
+    100010: Victor_Root
+    100012: Victor_Scale
+    400000: Target_Shapes
+    400002: //RootNode
+    400004: Victor_Head
+    400006: Victor_Head_Jnt
+    400008: Victor_Head_Tip
+    400010: Victor_Root
+    400012: Victor_Scale
+    2100000: mat_eyes
+    2100002: lambert2
+    2100004: mat_mouth
+    4300000: Victor_Head
+    7400000: Take 001
     9500000: //RootNode
-    13700000: //RootNode
-    2186277476908879412: ImportLogs
+    13700000: Victor_Head
   externalObjects: {}
   materials:
     importMaterials: 1
