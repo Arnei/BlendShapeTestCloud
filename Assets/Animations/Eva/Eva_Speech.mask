@@ -1,0 +1,180 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Eva_Speech
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lIndex1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lIndex1/wc_Ev_lIndex2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lIndex1/wc_Ev_lIndex2/wc_Ev_lIndex3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lMid1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lMid1/wc_Ev_lMid2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lMid1/wc_Ev_lMid2/wc_Ev_lMid3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lPinky1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lPinky1/wc_Ev_lPinky2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lPinky1/wc_Ev_lPinky2/wc_Ev_lPinky3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lRing1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lRing1/wc_Ev_lRing2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lRing1/wc_Ev_lRing2/wc_Ev_lRing3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lThumb1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lThumb1/wc_Ev_lThumb2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Left Collar/wc_Ev_Left
+      Shoulder/wc_Ev_Left Forearm/wc_Ev_Left Hand/wc_Ev_lThumb1/wc_Ev_lThumb2/wc_Ev_lThumb3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lEye
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lowerJaw
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lowerJaw/wc_Ev_tongueBase
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lowerJaw/wc_Ev_tongueBase/wc_Ev_tongue01
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lowerJaw/wc_Ev_tongueBase/wc_Ev_tongue01/wc_Ev_tongue02
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lowerJaw/wc_Ev_tongueBase/wc_Ev_tongue01/wc_Ev_tongue02/wc_Ev_tongue03
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lowerJaw/wc_Ev_tongueBase/wc_Ev_tongue01/wc_Ev_tongue02/wc_Ev_tongue03/wc_Ev_tongue04
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lowerJaw/wc_Ev_tongueBase/wc_Ev_tongue01/wc_Ev_tongue02/wc_Ev_tongue03/wc_Ev_tongue04/wc_Ev_tongue05
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_lowerJaw/wc_Ev_tongueBase/wc_Ev_tongue01/wc_Ev_tongue02/wc_Ev_tongue03/wc_Ev_tongue04/wc_Ev_tongue05/wc_Ev_tongueTip
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_rEye
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Neck/wc_Ev_Head/wc_Ev_upperJaw
+    m_Weight: 1
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rIndex1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rIndex1/wc_Ev_rIndex2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rIndex1/wc_Ev_rIndex2/wc_Ev_rIndex3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rMid1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rMid1/wc_Ev_rMid2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rMid1/wc_Ev_rMid2/wc_Ev_rMid3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rPinky1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rPinky1/wc_Ev_rPinky2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rPinky1/wc_Ev_rPinky2/wc_Ev_rPinky3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rRing1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rRing1/wc_Ev_rRing2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rRing1/wc_Ev_rRing2/wc_Ev_rRing3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rThumb1
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rThumb1/wc_Ev_rThumb2
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Abdomen/wc_Ev_Chest/wc_Ev_Right Collar/wc_Ev_Right
+      Shoulder/wc_Ev_Right Forearm/wc_Ev_Right Hand/wc_Ev_rThumb1/wc_Ev_rThumb2/wc_Ev_rThumb3
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Left Thigh
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Left Thigh/wc_Ev_Left Shin
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Left Thigh/wc_Ev_Left Shin/wc_Ev_Left
+      Foot
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Left Thigh/wc_Ev_Left Shin/wc_Ev_Left
+      Foot/wc_Ev_lToe
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Right Thigh
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Right Thigh/wc_Ev_Right Shin
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Right Thigh/wc_Ev_Right Shin/wc_Ev_Right
+      Foot
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Rig/wc_Ev_Hip/wc_Ev_Right Thigh/wc_Ev_Right Shin/wc_Ev_Right
+      Foot/wc_Ev_rToe
+    m_Weight: 0
+  - m_Path: FGC_Fem_Char_Eva_Skin
+    m_Weight: 0

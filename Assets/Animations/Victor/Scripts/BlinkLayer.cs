@@ -25,7 +25,7 @@ public class BlinkLayer : MonoBehaviour {
         {
             elapsed = elapsed % blinkFrequency;
             float randomValue = Random.value;
-            Debug.Log("RandomValue: " + randomValue);
+            //Debug.Log("RandomValue: " + randomValue);
             if ( randomValue < blinkProbability)
             {
                 anim.SetTrigger(BlinkTriggerHash);
