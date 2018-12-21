@@ -8,6 +8,7 @@ public class PlayableBugTest : MonoBehaviour {
 
     public bool GoToHappy;
     public bool GoToAngry;
+    public GameObject childwithSkinnedMeshRenderer;
 
     public AnimationClip happy;
     public AnimationClip angry;
@@ -20,10 +21,17 @@ public class PlayableBugTest : MonoBehaviour {
     AnimationClipPlayable pAngry;
     AnimationMixerPlayable mixerEmotionPlayable;
 
+    SkinnedMeshRenderer smr;
+    Mesh mesh;
+    int blendShapeCount;
+
+
 
     // Use this for initialization
     void Start () {
         animator = GetComponent<Animator>();
+        smr = childwithSkinnedMeshRenderer.GetComponent<SkinnedMeshRenderer>();
+        blendShapeCount = smr.sharedMesh.blendShapeCount;
 
         playableGraph = PlayableGraph.Create("ClairePlayableGraph");
         playableGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
@@ -51,13 +59,22 @@ public class PlayableBugTest : MonoBehaviour {
 	void Update () {
 		if(GoToHappy)
         {
-            mixerEmotionPlayable.SetInputWeight(0, 0.7f);
-            mixerEmotionPlayable.SetInputWeight(1, 0.3f);
+            for(int i=0; i < blendShapeCount; i++)
+            {
+                smr.SetBlendShapeWeight(i, 0f);
+            }
+
+            mixerEmotionPlayable.SetInputWeight(0, 1.0f);
+            mixerEmotionPlayable.SetInputWeight(1, 0.00f);
         }
         if (GoToAngry)
         {
-            mixerEmotionPlayable.SetInputWeight(0, 0.3f);
-            mixerEmotionPlayable.SetInputWeight(1, 0.7f);
+            for (int i = 0; i < blendShapeCount; i++)
+            {
+                smr.SetBlendShapeWeight(i, 0f);
+            }
+            mixerEmotionPlayable.SetInputWeight(0, 0.00f);
+            mixerEmotionPlayable.SetInputWeight(1, 1.0f);
         }
         Debug.Log("Happy Wieght: " + mixerEmotionPlayable.GetInputWeight(0));
         Debug.Log("Angry Wieght: " + mixerEmotionPlayable.GetInputWeight(1));

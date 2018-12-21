@@ -17,6 +17,7 @@ public class PlayablesPrototype : MonoBehaviour {
     public AvatarMask headMask;
 
 
+    private bool GoToHappyStart = true;
     private bool canPlayHappyMain;
     private bool canPlayAngryMain;
     private bool normalize = false;
@@ -32,6 +33,10 @@ public class PlayablesPrototype : MonoBehaviour {
     AnimationClipPlayable pAngry;
     AnimationClipPlayable pAngryTransitionIn;
     AnimationMixerPlayable mixerEmotionPlayable;
+
+    private float lerpBlendDuration = 0.5f;
+    private string currentlyPlaying = "TPose";
+    private float currentTime = 0f;
 
 
     // Use this for initialization
@@ -56,9 +61,9 @@ public class PlayablesPrototype : MonoBehaviour {
         // Connect to Top Level Layer Mixer
         playableGraph.Connect(runtimeAnimControllerPlayable, 0, mixerLayerPlayable, 0);
         playableGraph.Connect(mixerEmotionPlayable, 0, mixerLayerPlayable, 1);
-        mixerLayerPlayable.SetInputWeight(0, 0.0f);
+        mixerLayerPlayable.SetInputWeight(0, 1.0f);
         mixerLayerPlayable.SetInputWeight(1, 1.0f);
-       // mixerLayerPlayable.SetLayerMaskFromAvatarMask(1, headMask);
+        mixerLayerPlayable.SetLayerMaskFromAvatarMask(1, headMask);
 
         // Wrap the clips in a playable
         pHappy = AnimationClipPlayable.Create(playableGraph, happy);
@@ -98,13 +103,36 @@ public class PlayablesPrototype : MonoBehaviour {
 
         if (GoToHappy)
         {
-            GoToHappy = false;
-            canPlayHappyMain = true;
-            mixerEmotionPlayable.SetInputWeight(1, 1.0f);   // Set HappyTransition In to Active
-            mixerEmotionPlayable.SetInputWeight(0, 0.0f);   // Deactivate Main
-            mixerEmotionPlayable.SetInputWeight(2, 0.0f);
-            mixerEmotionPlayable.GetInput(1).SetTime(0f);
-            mixerEmotionPlayable.GetInput(1).SetDone(false);
+            if(GoToHappyStart)
+            {
+                mixerEmotionPlayable.GetInput(1).SetTime(0f);
+                mixerEmotionPlayable.GetInput(1).SetDone(false);
+                GoToHappyStart = false;
+            }
+
+            currentTime += Time.deltaTime;
+            float upcomingBlendWeight = Mathf.Lerp(0, 1, currentTime / lerpBlendDuration);
+            mixerEmotionPlayable.SetInputWeight(1, upcomingBlendWeight);
+
+
+            if (currentlyPlaying == "Happy")
+            {
+                mixerEmotionPlayable.SetInputWeight(0, 1f - upcomingBlendWeight);   
+            }
+            else if(currentlyPlaying == "Angry")
+            {
+                mixerEmotionPlayable.SetInputWeight(2, (1f - upcomingBlendWeight));
+            }
+
+
+            if (currentTime >= lerpBlendDuration)
+            {
+                GoToHappy = false;
+                GoToHappyStart = true;
+                canPlayHappyMain = true;
+                currentlyPlaying = "Happy";
+                currentTime = 0;
+            }
             normalize = true;
         }
         if (canPlayHappyMain && ((mixerEmotionPlayable.GetInput(1).GetDuration() - mixerEmotionPlayable.GetInput(1).GetTime()) < 0.1)) //(mixerEmotionPlayable.GetInput(1).GetTime() >= mixerEmotionPlayable.GetInput(1).GetDuration())
@@ -120,7 +148,7 @@ public class PlayablesPrototype : MonoBehaviour {
         {
             GoToAngry = false;
             canPlayAngryMain = true;
-            mixerEmotionPlayable.SetInputWeight(3, 1.0f);   // Set HappyTransition In to Active
+            mixerEmotionPlayable.SetInputWeight(3, 1.0f);   // Set AngryTransition In to Active
             mixerEmotionPlayable.SetInputWeight(0, 0.0f);   // Deactivate Main
             mixerEmotionPlayable.SetInputWeight(2, 0.0f);
             mixerEmotionPlayable.GetInput(3).SetTime(0f);
@@ -133,6 +161,8 @@ public class PlayablesPrototype : MonoBehaviour {
             mixerEmotionPlayable.SetInputWeight(3, 0.0f);   // Deactivate Transition
             mixerEmotionPlayable.SetInputWeight(2, 1.0f);   // Active Main
             mixerEmotionPlayable.GetInput(2).SetTime(0f);
+
+            currentlyPlaying = "Angry";
             normalize = true;
         }
 
@@ -140,7 +170,7 @@ public class PlayablesPrototype : MonoBehaviour {
 
         if(normalize) normalizeWeights();
 
-        addInTPoseIfNecessary();
+        //addInTPoseIfNecessary();
 
         //Debug.Log("Happy Wieght: " + mixerEmotionPlayable.GetInputWeight(0));
         //Debug.Log("Angry Wieght: " + mixerEmotionPlayable.GetInputWeight(2));
@@ -151,16 +181,16 @@ public class PlayablesPrototype : MonoBehaviour {
     void normalizeWeights()
     {
         int length = mixerEmotionPlayable.GetInputCount();
-        int numberOfWeights = 0;
+        float sumOfWeights = 0;
         for (int i=0; i < length; i++)
         {
-            if (mixerEmotionPlayable.GetInputWeight(i) > 0f) numberOfWeights++;
+            if (mixerEmotionPlayable.GetInputWeight(i) > 0f) sumOfWeights += mixerEmotionPlayable.GetInputWeight(i);
         }
         for (int i=0; i < length; i++)
         {
             if (mixerEmotionPlayable.GetInputWeight(i) > 0f)
             {
-                mixerEmotionPlayable.SetInputWeight(i, mixerEmotionPlayable.GetInputWeight(i) / numberOfWeights);
+                mixerEmotionPlayable.SetInputWeight(i, mixerEmotionPlayable.GetInputWeight(i) / sumOfWeights);
             }
         }
 
