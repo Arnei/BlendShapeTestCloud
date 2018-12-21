@@ -4407,14 +4407,17 @@ MonoBehaviour:
     animationGroupList:
     - transitionIn: {fileID: 7400002, guid: c851e980d3c5d2d4c9b05d9eabea88ef, type: 3}
       main: {fileID: 7400000, guid: c851e980d3c5d2d4c9b05d9eabea88ef, type: 3}
+    - transitionIn: {fileID: 7400000, guid: 9f3a08a2278071444a3ca617635186b3, type: 3}
+      main: {fileID: 7400002, guid: 9f3a08a2278071444a3ca617635186b3, type: 3}
   - name: Angry
     animationGroupList:
     - transitionIn: {fileID: 7400000, guid: 113916a371f695b449dd328b6e89a86f, type: 3}
       main: {fileID: 7400002, guid: 113916a371f695b449dd328b6e89a86f, type: 3}
-  emotionNames:
-  - Happy
-  - Angry
-  goToEmotion: 
+  goToEmotionList:
+  - name: Happy
+    goToEmotion: 0
+  - name: Angry
+    goToEmotion: 0
 --- !u!1 &1294056145
 GameObject:
   m_ObjectHideFlags: 0

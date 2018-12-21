@@ -23,7 +23,8 @@ public class StringBool
 
 /*
  * [TODO] Different LERPS
- * [TODO] Handle transitions with TransitionIn clips
+ * [TODO] Create looping Main animation by blending them. Yes, that probably means saving every clip twice. But else the automatic smooth transition from TransitionIn to Main would be lost.
+ * Maya Game Exporter kannste knicken, buggt nur rum.
  */
 [RequireComponent(typeof(Animator))]
 public class PlayablesPrototypeV2 : MonoBehaviour
