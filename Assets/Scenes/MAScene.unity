@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.1832084, g: 0.22683628, b: 0.2946878, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -254,7 +254,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 71722100}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.449, y: 1.621, z: -0.477}
+  m_LocalPosition: {x: 1.449, y: 1.688, z: -0.477}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -4413,10 +4413,42 @@ MonoBehaviour:
     animationGroupList:
     - transitionIn: {fileID: 7400000, guid: 113916a371f695b449dd328b6e89a86f, type: 3}
       main: {fileID: 7400002, guid: 113916a371f695b449dd328b6e89a86f, type: 3}
+  - name: Bored
+    animationGroupList:
+    - transitionIn: {fileID: 7400002, guid: ccfa115ed5e07e64fa9992439c7099db, type: 3}
+      main: {fileID: 7400000, guid: ccfa115ed5e07e64fa9992439c7099db, type: 3}
+  - name: Uncomfortable
+    animationGroupList:
+    - transitionIn: {fileID: 7400002, guid: faee7f1421b5e2746aa904404c49c265, type: 3}
+      main: {fileID: 7400000, guid: faee7f1421b5e2746aa904404c49c265, type: 3}
+  - name: Interested
+    animationGroupList:
+    - transitionIn: {fileID: 7400002, guid: f2bc46d98b064214e9f6ef1ef1fcc5da, type: 3}
+      main: {fileID: 7400000, guid: f2bc46d98b064214e9f6ef1ef1fcc5da, type: 3}
+    - transitionIn: {fileID: 7400002, guid: 3bd8bdcd1d65abd40aec7958aa5d1e0d, type: 3}
+      main: {fileID: 7400000, guid: 3bd8bdcd1d65abd40aec7958aa5d1e0d, type: 3}
+  - name: Confused
+    animationGroupList:
+    - transitionIn: {fileID: 7400002, guid: 0974ce47ced1fec47913ca7aaf3f0577, type: 3}
+      main: {fileID: 7400000, guid: 0974ce47ced1fec47913ca7aaf3f0577, type: 3}
+  - name: Neutral
+    animationGroupList:
+    - transitionIn: {fileID: 0}
+      main: {fileID: 7400000, guid: 17e405464c0ba3646905b0358c029001, type: 3}
   goToEmotionList:
   - name: Happy
     goToEmotion: 0
   - name: Angry
+    goToEmotion: 0
+  - name: Bored
+    goToEmotion: 0
+  - name: Uncomfortable
+    goToEmotion: 0
+  - name: Interested
+    goToEmotion: 0
+  - name: Confused
+    goToEmotion: 0
+  - name: Neutral
     goToEmotion: 0
 --- !u!1 &1294056145
 GameObject:
@@ -4829,8 +4861,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5586d5441746a52499b5edae640017f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterScripts:
-  - {fileID: 2021618525}
+  characterScripts: []
   emotionNames:
   - Happy
   - Sad
@@ -5570,13 +5601,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1642499945}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.19074067, y: -0.25372264, z: 0.0511088, w: 0.94690585}
   m_LocalPosition: {x: 0.367, y: 2.701, z: -0.911}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 22.778002, y: -30.000002, z: 0}
 --- !u!1 &1659241179
 GameObject:
   m_ObjectHideFlags: 0
@@ -8119,12 +8150,17 @@ MonoBehaviour:
   emotionNames:
   - Happy
   - Sad
+  - Bored
   emotionObjects:
   - name: Happy
     animationGroupList:
     - transitionIn: {fileID: 0}
       main: {fileID: 7400000, guid: bcef68d0c06b292419d6b452fc9556df, type: 3}
   - name: Sad
+    animationGroupList:
+    - transitionIn: {fileID: 0}
+      main: {fileID: 0}
+  - name: Bored
     animationGroupList:
     - transitionIn: {fileID: 0}
       main: {fileID: 0}
@@ -8303,6 +8339,11 @@ MonoBehaviour:
   emotionNames:
   - Happy
   - Angry
+  - Bored
+  - Uncomfortable
+  - Interested
+  - Confused
+  - Neutral
 --- !u!4 &2064712007
 Transform:
   m_ObjectHideFlags: 0
