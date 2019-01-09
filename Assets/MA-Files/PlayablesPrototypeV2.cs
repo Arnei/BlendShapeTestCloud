@@ -57,7 +57,10 @@ public class PlayablesPrototypeV2 : MonoBehaviour
     private bool fPlayMainAfterTransition;
     private bool fWithTransitionIn;
     private bool fPlayMain;
+    private bool smoothMainClips = true;
     private bool normalize = false;
+    private bool fPlayLoopMain = false;
+    private bool fInitLoopMain = true;
 
     // Persisent Variables for Update
     private string currentlyPlaying;                // The currently playing emotion
@@ -66,11 +69,19 @@ public class PlayablesPrototypeV2 : MonoBehaviour
     private float currentTime = 0f;                 // How much transition time has already elapsed
     private int emotionNumber = 0;                  // Which clips to play for a given emotion
     private int previousEmotionNumber = 0;
+    private string blendToKey;
+
+    private int mainMixerMainIndex = 0;
+    private int mainMixerCopyIndex = 1;
+    private float mainLoopTriggerTime = 1.0f;              // Time over which a main loop is interpolated with itself. [TODO] Should be made relative to main clip duration, as it will behave strangely for small durations.
+    private float mainLoopCurrentTime = 0f;
+    private string mainBlendToKey;
 
     // For display purposes
     public GameObject GOWithDrawGraphOnImage;
     DrawGraphOnImage drawGraphOnImage;
 
+    // To select Interpolation modes through the inspector
     public enum interpolationENUM { Linear, Cubic, Bezier };
     public interpolationENUM interpolationMode;
 
@@ -125,18 +136,29 @@ public class PlayablesPrototypeV2 : MonoBehaviour
                 if (emotionObjects[i].animationGroupList[j].main)
                 {
                     playablesDict.Add(emotionObjects[i].name + j, playablesCount);
-                    AnimationClipPlayable temp = AnimationClipPlayable.Create(playableGraph, emotionObjects[i].animationGroupList[j].main);
-                    playableGraph.Connect(temp, 0, mixerEmotionPlayable, playablesCount);
+                    AnimationMixerPlayable mainMixer = AnimationMixerPlayable.Create(playableGraph, 2);
+                    playableGraph.Connect(mainMixer, 0, mixerEmotionPlayable, playablesCount);
                     playablesCount++;
+
+                    AnimationClipPlayable main = AnimationClipPlayable.Create(playableGraph, emotionObjects[i].animationGroupList[j].main);
+                    playableGraph.Connect(main, 0, mainMixer, mainMixerMainIndex);
+                    mainMixer.SetInputWeight(mainMixerMainIndex, 1.0f);  // Set first clip to active
+                    main.SetDuration(emotionObjects[i].animationGroupList[j].main.length);
+
+                    AnimationClipPlayable mainCopy = AnimationClipPlayable.Create(playableGraph, emotionObjects[i].animationGroupList[j].main);
+                    playableGraph.Connect(mainCopy, 0, mainMixer, mainMixerCopyIndex);
+                    mainMixer.SetInputWeight(mainMixerCopyIndex, 0.1f);  // Set second clip to inactive
+                    mainCopy.SetDuration(emotionObjects[i].animationGroupList[j].main.length);
+
                 }
 
                 if (emotionObjects[i].animationGroupList[j].transitionIn)
                 {
                     playablesDict.Add(emotionObjects[i].name + "TransitionIn" + j, playablesCount);
-                    AnimationClipPlayable temp = AnimationClipPlayable.Create(playableGraph, emotionObjects[i].animationGroupList[j].transitionIn);
-                    playableGraph.Connect(temp, 0, mixerEmotionPlayable, playablesCount);
+                    AnimationClipPlayable transition = AnimationClipPlayable.Create(playableGraph, emotionObjects[i].animationGroupList[j].transitionIn);
+                    playableGraph.Connect(transition, 0, mixerEmotionPlayable, playablesCount);
 
-                    temp.SetDuration(emotionObjects[i].animationGroupList[j].transitionIn.length);
+                    transition.SetDuration(emotionObjects[i].animationGroupList[j].transitionIn.length);
                     playablesCount++;
                 }
             }
@@ -153,7 +175,7 @@ public class PlayablesPrototypeV2 : MonoBehaviour
         drawGraphOnImage = GOWithDrawGraphOnImage.GetComponent<DrawGraphOnImage>();
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         // mixerEmotionPlayable.SetInputWeight((int)PlayablesEnum.TPose, 0.0f); // Set TPose to 0
 
@@ -172,14 +194,17 @@ public class PlayablesPrototypeV2 : MonoBehaviour
         {
             transitionEmotion = emotionDict[goToEmotionNext.Dequeue()];
             fPlayTransition = true;
+
+            // Randomly select one of the clips sets of the emotion
             for (int j = 0; j < emotionObjects.Count; j++)
             {
                 if (emotionObjects[j].name.Equals(transitionEmotion))
                 {
                     emotionNumber = Random.Range(0, emotionObjects[j].animationGroupList.Count);
-                    //Debug.Log("Emotion Number: " + emotionNumber + " for Emotion: " + transitionEmotion);
                 }
             }
+
+            // Flag wether there is a transitionIn animation or not
             if (playablesDict.ContainsKey(transitionEmotion + "TransitionIn" + emotionNumber))
             {
                 fWithTransitionIn = true;
@@ -199,18 +224,27 @@ public class PlayablesPrototypeV2 : MonoBehaviour
             drawGraphOnImage.clear();
         }
 
-        /*
-         * Transition
-         */
-        if (fPlayTransition && fWithTransitionIn)
+        // TRANSITION REWORK
+        if (fPlayTransition)
         {
             // Initialize Transition when it begins
             if (fInitTransition)
             {
-                mixerEmotionPlayable.GetInput(playablesDict[transitionEmotion + "TransitionIn" + emotionNumber]).SetTime(0f);
-                mixerEmotionPlayable.GetInput(playablesDict[transitionEmotion + "TransitionIn" + emotionNumber]).SetDone(false);
-
+                if (fWithTransitionIn)
+                {
+                    blendToKey = transitionEmotion + "TransitionIn" + emotionNumber;
+                    mixerEmotionPlayable.GetInput(playablesDict[blendToKey]).SetTime(0f);
+                    mixerEmotionPlayable.GetInput(playablesDict[blendToKey]).SetDone(false);
+                }
+                else
+                {
+                    blendToKey = transitionEmotion + emotionNumber;
+                    mixerEmotionPlayable.GetInput(playablesDict[blendToKey]).GetInput(mainMixerMainIndex).SetTime(0f);
+                    mixerEmotionPlayable.GetInput(playablesDict[blendToKey]).GetInput(mainMixerMainIndex).SetDone(false);
+                }
+                
                 fInitTransition = false;
+                fPlayMainAfterTransition = false;   // In case a new transition starts while a transitionIn animation is still playing
             }
 
             // LERP Transition and currently playing emotion
@@ -222,7 +256,7 @@ public class PlayablesPrototypeV2 : MonoBehaviour
             float pStart = 0f;
             float pEnd = 1f;
 
-            switch(interpolationMode)
+            switch (interpolationMode)
             {
                 case interpolationENUM.Linear:
                     t = mu;
@@ -261,121 +295,39 @@ public class PlayablesPrototypeV2 : MonoBehaviour
 
             }
 
-
-
-
             // Draw for display purposes
             drawGraphOnImage.drawPoint(0, pStart, Color.red);
             drawGraphOnImage.drawPoint(1, pEnd, Color.green);
             drawGraphOnImage.drawPoint(mu, upcomingBlendWeight, Color.black);
 
-
+            // Set Blend Weights
             mixerEmotionPlayable.SetInputWeight(playablesDict[currentlyPlaying + previousEmotionNumber], 1f - upcomingBlendWeight);
-            mixerEmotionPlayable.SetInputWeight(playablesDict[transitionEmotion + "TransitionIn" + emotionNumber], upcomingBlendWeight);
+            mixerEmotionPlayable.SetInputWeight(playablesDict[blendToKey], upcomingBlendWeight);
 
             // End Transition CleanUp, Prepare playing Main
             if (currentTime >= lerpBlendDuration)
             {
-                Debug.Log("Transition from " + currentlyPlaying + " to " + transitionEmotion + " complete.");
+                Debug.Log("Transition from " + currentlyPlaying + previousEmotionNumber + " to " + blendToKey + " complete.");
+
+                if (fWithTransitionIn)
+                {
+                    fPlayMainAfterTransition = true;
+                    currentlyPlaying = transitionEmotion + "TransitionIn";
+                }
+                else
+                {
+                    currentlyPlaying = transitionEmotion;
+                }
 
                 fPlayTransition = false;
                 fInitTransition = true;
-                fPlayMainAfterTransition = true;
-                currentlyPlaying = transitionEmotion + "TransitionIn";
                 currentTime = 0;
                 previousEmotionNumber = emotionNumber;
             }
             normalize = true;
-
-
-
         }
+        // END REWORK
 
-        /*
-         * Transition without TransitionIn
-         */
-        if (fPlayTransition && !fWithTransitionIn)
-        {
-            // Initialize Transition when it begins
-            if (fInitTransition)
-            {
-                fPlayMainAfterTransition = false;
-
-                fInitTransition = false;
-            }
-
-            // LERP Transition and currently playing emotion
-            // Interpolation website: http://paulbourke.net/miscellaneous/interpolation/
-            currentTime += Time.deltaTime;
-            float mu = currentTime / lerpBlendDuration;
-            float t;
-            float upcomingBlendWeight = 0;
-            float pStart = 0f;
-            float pEnd = 1f;
-
-            switch (interpolationMode)
-            {
-                case interpolationENUM.Linear:
-                    t = mu;
-                    upcomingBlendWeight = Mathf.Lerp(pStart, pEnd, t);
-                    break;
-
-                case interpolationENUM.Cubic:
-                    t = (1 - Mathf.Cos(mu * Mathf.PI)) / 2;
-                    upcomingBlendWeight = Mathf.Lerp(pStart, pEnd, t);
-                    break;
-
-                case interpolationENUM.Bezier:
-                    // Bezier, B-Spline? 4-point interpolation, so they need two manually defined points. No recommendations?
-                    // S. 148, kurze Erwänung unter Nonlinear Interpolation: https://books.google.de/books?id=yEzrBgAAQBAJ&pg=PA147&lpg=PA147&dq=facial+animation+transition+interpolation&source=bl&ots=ntfbn7k6ww&sig=FDfcPAnj_mr76FcedSKEx4zrjRU&hl=de&sa=X&ved=2ahUKEwi_u42K3q7fAhUHmYsKHfYJDncQ6AEwA3oECAcQAQ#v=onepage&q=facial%20animation%20transition%20interpolation&f=false
-                    // Linear, Cubic B-Spline, Cardinal Spline: https://www.researchgate.net/publication/44250675_Parametric_Facial_Expression_Synthesis_and_Animation
-                    // Best Bezier explanation ever: https://denisrizov.com/2016/06/02/bezier-curves-unity-package-included/
-                    t = mu;
-                    float p1 = 2.0f;
-                    float p2 = 0.0f;
-
-                    float u = 1f - t;
-                    float t2 = t * t;
-                    float u2 = u * u;
-                    float u3 = u2 * u;
-                    float t3 = t2 * t;
-
-                    upcomingBlendWeight =
-                        (u3) * pStart +
-                        (3f * u2 * t) * p1 +
-                        (3f * u * t2) * p2 +
-                        (t3) * pEnd;
-                    break;
-
-                default:
-                    break;
-
-            }
-
-            // Draw for display purposes
-            drawGraphOnImage.drawPoint(0, pStart, Color.red);
-            drawGraphOnImage.drawPoint(1, pEnd, Color.green);
-            drawGraphOnImage.drawPoint(mu, upcomingBlendWeight, Color.black);
-
-
-
-            mixerEmotionPlayable.SetInputWeight(playablesDict[currentlyPlaying + previousEmotionNumber], 1f - upcomingBlendWeight);
-            mixerEmotionPlayable.SetInputWeight(playablesDict[transitionEmotion + emotionNumber], upcomingBlendWeight);
-
-            // End Transition CleanUp, Prepare playing Main
-            if (currentTime >= lerpBlendDuration)
-            {
-                Debug.Log("Transition from " + currentlyPlaying + " to " + transitionEmotion + " complete.");
-                fPlayTransition = false;
-                fInitTransition = true;
-                currentlyPlaying = transitionEmotion;
-                currentTime = 0;
-                previousEmotionNumber = emotionNumber;
-            }
-            normalize = true;
-
-
-        }
 
         // Play main emotion slightly before transition ends to avoid the 1 "neutral" frame that occurs when using "isDone()"
         if (fPlayMainAfterTransition && ((mixerEmotionPlayable.GetInput(playablesDict[transitionEmotion + "TransitionIn" + emotionNumber]).GetDuration() - mixerEmotionPlayable.GetInput(playablesDict[transitionEmotion + "TransitionIn" + emotionNumber]).GetTime()) < 0.1)) //(mixerEmotionPlayable.GetInput(1).GetTime() >= mixerEmotionPlayable.GetInput(1).GetDuration())
@@ -383,10 +335,63 @@ public class PlayablesPrototypeV2 : MonoBehaviour
             currentlyPlaying = transitionEmotion;
             fPlayMainAfterTransition = false;
             mixerEmotionPlayable.SetInputWeight(playablesDict[currentlyPlaying + "TransitionIn" + emotionNumber], 0.0f);   // Deactivate Transition
-            mixerEmotionPlayable.SetInputWeight(playablesDict[currentlyPlaying + emotionNumber], 1.0f);   // Active Main
-            mixerEmotionPlayable.GetInput(playablesDict[currentlyPlaying + emotionNumber]).SetTime(0f);
+            mixerEmotionPlayable.SetInputWeight(playablesDict[currentlyPlaying + emotionNumber], 1.0f);                    // Active Main
+            mixerEmotionPlayable.GetInput(playablesDict[currentlyPlaying + emotionNumber]).GetInput(mainMixerMainIndex).SetTime(0f);
             normalize = true;
         }
+
+        // If close to the end of a main clip, set loop starting flag
+        if (!fPlayTransition && !currentlyPlaying.Contains("TransitionIn"))
+        {
+            if (((mixerEmotionPlayable.GetInput(playablesDict[currentlyPlaying + emotionNumber]).GetInput(mainMixerMainIndex).GetDuration() - mixerEmotionPlayable.GetInput(playablesDict[currentlyPlaying + emotionNumber]).GetInput(mainMixerMainIndex).GetTime()) < mainLoopTriggerTime)) 
+            {
+                fPlayLoopMain = true;
+            }
+        }
+
+        // Ensure a smooth loop to the beginning for the main animation. Based on linearly interpolating the running clip with a copy of itself.
+        if (fPlayLoopMain)
+        {
+            // Init
+            if (fInitLoopMain)
+            {
+                mainBlendToKey = currentlyPlaying + emotionNumber;
+                mixerEmotionPlayable.GetInput(playablesDict[mainBlendToKey]).GetInput(mainMixerCopyIndex).SetTime(0f);
+                fInitLoopMain = false;
+            }
+
+            // LERP Init
+            mainLoopCurrentTime += Time.deltaTime;
+            float mu = mainLoopCurrentTime / lerpBlendDuration;
+            float t;
+            float upcomingBlendWeight = 0;
+            float pStart = 0f;
+            float pEnd = 1f;
+
+            // Linear
+            t = mu;
+            upcomingBlendWeight = Mathf.Lerp(pStart, pEnd, t);
+
+            // Set Weights
+            mixerEmotionPlayable.GetInput(playablesDict[mainBlendToKey]).SetInputWeight(mainMixerMainIndex, 1f - upcomingBlendWeight);
+            mixerEmotionPlayable.GetInput(playablesDict[mainBlendToKey]).SetInputWeight(mainMixerCopyIndex, upcomingBlendWeight);
+
+
+            // CleanUp
+            if (upcomingBlendWeight >= 1)
+            {
+                float timeElapsed = (float)mixerEmotionPlayable.GetInput(playablesDict[mainBlendToKey]).GetInput(mainMixerCopyIndex).GetTime();
+                mixerEmotionPlayable.GetInput(playablesDict[mainBlendToKey]).GetInput(mainMixerMainIndex).SetTime(timeElapsed);
+                mixerEmotionPlayable.GetInput(playablesDict[mainBlendToKey]).SetInputWeight(mainMixerMainIndex, 1.0f);
+                mixerEmotionPlayable.GetInput(playablesDict[mainBlendToKey]).SetInputWeight(mainMixerCopyIndex, 0.0f);
+
+                mainLoopCurrentTime = 0.0f;
+                fInitLoopMain = true;
+                fPlayLoopMain = false;
+            }
+
+        }
+
 
 
         // If weights were changed, normalize them
