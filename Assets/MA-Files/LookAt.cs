@@ -56,8 +56,15 @@ public class LookAt : MonoBehaviour {
     private float startHeadFollow;
     private float stopHeadFollow;
 
+
+    // Test Process LookFor Class
+    private ProcessLookFor headProcessLookFor;
+    private ProcessLookFor leftEyeProcessLookFor;
+    private ProcessLookFor rightEyeProcessLookFor;
+
+
     // Use this for initialization
-    void Start () {
+    void Start() {
         // Save initial rotation to later calculate deviations from it
         headInitRotation = head.transform.localRotation;
         leftEyeInitRotation = leftEye.transform.localRotation;
@@ -72,12 +79,17 @@ public class LookAt : MonoBehaviour {
 
         //headOffsetLocalRotation = Quaternion.Inverse(this.transform.rotation) * head.transform.localRotation;
 
+        headProcessLookFor = new ProcessLookFor(head, headOffsetRotation, this.gameObject);
+        leftEyeProcessLookFor = new ProcessLookFor(leftEye, leftEyeOffsetRotation, this.gameObject);
+        rightEyeProcessLookFor = new ProcessLookFor(rightEye, rightEyeOffsetRotation, this.gameObject);
+
         gazePosition = new GameObject();
     }
 
     void Update()
     {
         // Reset the animation offset, so a new one can be applied and to not interfere with the ProcessLookFor calculations
+        // Relies on the animation data being applied at this point!
         head.transform.localRotation = Quaternion.Inverse(headAnimationClipOffset) * head.transform.localRotation;
         leftEye.transform.localRotation = Quaternion.Inverse(leftEyeAnimationClipOffset) * leftEye.transform.localRotation;
         rightEye.transform.localRotation = Quaternion.Inverse(rightEyeAnimationClipOffset) * rightEye.transform.localRotation;
@@ -95,7 +107,7 @@ public class LookAt : MonoBehaviour {
         rightEyeAnimationClipOffset = rightEye.transform.localRotation * Quaternion.Inverse(rightEyeInitRotation);
 
         // Set constants based on mode
-        if(pursuit)
+        if (pursuit)
         {
             eyeSpeed = pursuitEyeSpeed;
             headSpeed = pursuitHeadSpeed;
@@ -110,27 +122,55 @@ public class LookAt : MonoBehaviour {
             stopHeadFollow = gazeStopHeadFollow;
         }
 
-        // Process lookAts in order
+        // Process lookAts in order: head, then eyes
 
         // Based on last frames calculations, let the head should follow lookAtObject or not
         if (headFollow)
         {
-            ProcessLookFor(head, headOffsetRotation, lastHeadRotation, headSpeed, lookAtObject.transform);
+            //ProcessLookFor(head, headOffsetRotation, lastHeadRotation, headSpeed, lookAtObject.transform);
+            headProcessLookFor.process(lastHeadRotation, lookAtObject.transform);
+            if (headProcessLookFor.checkIfExceedsMaxTurnAngle(MaxTurnAngle))
+                headProcessLookFor.returnToNeutral(lastHeadRotation, headSpeed);
+            else
+                headProcessLookFor.applyProcess(lastHeadRotation, headSpeed);
+
             gazePosition.transform.position = new Vector3(lookAtObject.transform.position.x, lookAtObject.transform.position.y, lookAtObject.transform.position.z);
         }
         else
         {
-            ProcessLookFor(head, headOffsetRotation, lastHeadRotation, headSpeed, gazePosition.transform);
+            //ProcessLookFor(head, headOffsetRotation, lastHeadRotation, headSpeed, gazePosition.transform);
+            headProcessLookFor.process(lastHeadRotation, gazePosition.transform);
+            if (headProcessLookFor.checkIfExceedsMaxTurnAngle(MaxTurnAngle))
+                headProcessLookFor.returnToNeutral(lastHeadRotation, headSpeed);
+            else
+                headProcessLookFor.applyProcess(lastHeadRotation, headSpeed);
         }
         //ProcessLookFor(head, headOffsetRotation, lastHeadRotation, 2.0f, lookAtObject.transform);
+
+        leftEyeProcessLookFor.process(lastLeftEyeRotation, lookAtObject.transform);
+        rightEyeProcessLookFor.process(lastRightEyeRotation, lookAtObject.transform);
+        bool leftEyeExceeds = leftEyeProcessLookFor.checkIfExceedsMaxTurnAngle(MaxTurnAngle);
+        bool rightEyeExceeds = rightEyeProcessLookFor.checkIfExceedsMaxTurnAngle(MaxTurnAngle);
+
+        bool keepStaring = true;
+        if (keepStaring)
+        {
+            if (!leftEyeExceeds) leftEyeProcessLookFor.applyProcess(lastLeftEyeRotation, eyeSpeed);
+            if (!rightEyeExceeds) rightEyeProcessLookFor.applyProcess(lastRightEyeRotation, eyeSpeed);
+        }
+        else // turn back
+        {
+            //if (leftEyeExceeds || rightEyeExceeds) // then turn back
+        }
+
         ProcessLookFor(leftEye, leftEyeOffsetRotation, lastLeftEyeRotation, eyeSpeed, lookAtObject.transform);
         ProcessLookFor(rightEye, rightEyeOffsetRotation, lastRightEyeRotation, eyeSpeed, lookAtObject.transform);
 
-        // Calculate by how much the current eye rotationd deviates from neutral position
+        // Calculate by how much the current eye rotation deviates from neutral position
         leftEyeLookAtDiffAngle = Quaternion.Angle(leftEye.transform.localRotation, Quaternion.Inverse(leftEyeInitRotation));
         rightEyeLookAtDiffAngle = Quaternion.Angle(rightEye.transform.localRotation, Quaternion.Inverse(rightEyeInitRotation));
-        Debug.Log("Right Eye Angle: " + rightEyeLookAtDiffAngle);
-        Debug.Log("Left Eye Angle: " + leftEyeLookAtDiffAngle);
+        //Debug.Log("Right Eye Angle: " + rightEyeLookAtDiffAngle);
+        //Debug.Log("Left Eye Angle: " + leftEyeLookAtDiffAngle);
 
         // Decide whether the head should follow lookAtObject on the next frame
         if ((rightEyeLookAtDiffAngle + leftEyeLookAtDiffAngle) / 2 > startHeadFollow)
@@ -141,9 +181,9 @@ public class LookAt : MonoBehaviour {
         {
             headFollow = false;
         }
-        
 
-        // Add found difference after the lookAt overwrite
+
+        // Add difference from neutral rotation to animation rotation back in after the lookAt overwrite
         head.transform.localRotation = headAnimationClipOffset * head.transform.localRotation;
         leftEye.transform.localRotation = leftEyeAnimationClipOffset * leftEye.transform.localRotation;
         rightEye.transform.localRotation = rightEyeAnimationClipOffset * rightEye.transform.localRotation;
@@ -193,5 +233,79 @@ public class LookAt : MonoBehaviour {
 
             */
         }
+    }
+
+    bool checkIfExceedsMaxTurnAngle(GameObject inObject, Quaternion inOffsetRotation, Quaternion lastRotation, float inSpeed, Transform target)
+    {
+        // now look at player by rotating the true forward rotation by the look at rotation
+        Vector3 toCamera = target.transform.position - inObject.transform.position;
+
+        // look to camera.  this rotates forward vector towards camera
+        // make sure to rotate by the object's offset first, since they aren't always forward
+        Quaternion lookToCamera = Quaternion.LookRotation(toCamera);
+
+        // find difference between forward vector and look to camera
+        Quaternion diffQuat = Quaternion.Inverse(this.transform.rotation) * lookToCamera;
+
+        // if outside range, lerp back to middle
+        if (diffQuat.eulerAngles.y > MaxTurnAngle && diffQuat.eulerAngles.y < 360.0f - MaxTurnAngle)
+            return true;
+        else
+            return false;
+    }
+
+}
+
+
+public class ProcessLookFor
+{
+    // External
+    private GameObject inObject;
+    private GameObject rootObject;
+    private Quaternion inOffsetRotation;
+
+    // Internal
+    private Vector3 toCamera;
+    private Quaternion lookToCamera;
+    private Quaternion diffQuat;
+
+    public ProcessLookFor(GameObject toBeRotatedObject, Quaternion initalOffsetRotation, GameObject rootParentObject)
+    {
+        inObject = toBeRotatedObject;
+        rootObject = rootParentObject;
+        inOffsetRotation = initalOffsetRotation;
+    }
+
+    public void process(Quaternion lastRotation, Transform target)
+    {
+        // now look at player by rotating the true forward rotation by the look at rotation
+        toCamera = target.transform.position - inObject.transform.position;
+
+        // look to camera.  this rotates forward vector towards camera
+        // make sure to rotate by the object's offset first, since they aren't always forward
+        lookToCamera = Quaternion.LookRotation(toCamera);
+
+        // find difference between forward vector and look to camera
+        diffQuat = Quaternion.Inverse(rootObject.transform.rotation) * lookToCamera;
+    }
+
+    public void applyProcess(Quaternion lastRotation, float inSpeed)
+    {
+            // lerp rotation to camera, making sure to rotate by the object's offset since they aren't always forward
+            inObject.transform.rotation = Quaternion.Slerp(lastRotation, lookToCamera * inOffsetRotation, inSpeed * Time.deltaTime);
+    }
+
+    public bool checkIfExceedsMaxTurnAngle(float MaxTurnAngle)
+    {
+        // if outside range, lerp back to middle
+        if (diffQuat.eulerAngles.y > MaxTurnAngle && diffQuat.eulerAngles.y < 360.0f - MaxTurnAngle)
+            return true;
+        else
+            return false;
+    }
+
+    public void returnToNeutral(Quaternion lastRotation, float inSpeed)
+    {
+        inObject.transform.rotation = Quaternion.Slerp(lastRotation, rootObject.transform.rotation * inOffsetRotation, inSpeed * Time.deltaTime);
     }
 }

@@ -5,21 +5,7 @@ using UnityEngine.Animations;
 using UnityEngine.Playables;
 
 
-/*
- * A helper class to properly display GoTo options in the editor
- */
-[System.Serializable]
-public class StringBool
-{
-    public string name;
-    public bool goToEmotion;
 
-    public StringBool(string name, bool goToEmotion)
-    {
-        this.name = name;
-        this.goToEmotion = goToEmotion;
-    }
-}
 
 /*
  * [TODO] Different LERPS
@@ -37,6 +23,20 @@ public class PlayablesPrototypeV2 : MonoBehaviour
     public List<Emotion> emotionObjects = new List<Emotion>();  // Contains Clips
     [HideInInspector]
     public List<StringBool> goToEmotionList;    // Contains emotion names and whether they should be transitioned to (For Editor purporses)
+
+    // For display purposes
+    public GameObject GOWithDrawGraphOnImage;
+    DrawGraphOnImage drawGraphOnImage;
+
+    // To select Interpolation modes through the inspector
+    public enum interpolationENUM { Linear, Cubic, Bezier };
+    public interpolationENUM interpolationMode;
+
+    // Start Emotion
+    public string startEmotion = "Neutral";
+
+    // Flag for a hack that ought to fix the "stuck blendshapes" bug of the Playables API. Can and WILL break other scripts (such as the LookAt script)!
+    public bool HACKFixStuckBlendshapes = false;
 
     // Private Data Structures
     private Dictionary<string, int> playablesDict;  // Find the correct PlayableInputID for a given animation clip
@@ -77,13 +77,7 @@ public class PlayablesPrototypeV2 : MonoBehaviour
     private float mainLoopCurrentTime = 0f;
     private string mainBlendToKey;
 
-    // For display purposes
-    public GameObject GOWithDrawGraphOnImage;
-    DrawGraphOnImage drawGraphOnImage;
 
-    // To select Interpolation modes through the inspector
-    public enum interpolationENUM { Linear, Cubic, Bezier };
-    public interpolationENUM interpolationMode;
 
 
     // Use this for initialization
@@ -164,8 +158,17 @@ public class PlayablesPrototypeV2 : MonoBehaviour
             }
         }
 
-        currentlyPlaying = emotionObjects[0].name;  // If not given, assume some default value
-        goToEmotionNext.Enqueue(0);
+        if(!playEmotion(startEmotion))
+        {
+            Debug.LogError("Given starting emotion does not exist.");
+            currentlyPlaying = emotionObjects[0].name;  // If not given, assume some default value
+            goToEmotionNext.Enqueue(0);
+        }
+        else
+        {
+            currentlyPlaying = startEmotion;
+        }
+
 
         // Plays the Graph
         playableGraph.Play();
@@ -177,10 +180,13 @@ public class PlayablesPrototypeV2 : MonoBehaviour
 
     private void Update()
     {
-        // mixerEmotionPlayable.SetInputWeight((int)PlayablesEnum.TPose, 0.0f); // Set TPose to 0
+        if(HACKFixStuckBlendshapes)
+        {
+            animator.runtimeAnimatorController = null;          // Necessary to fix a bug where blendshapes "get stuck" on SetInputWeight changes. Reassigned at the end of Update.
+        }
 
         // Check if new Transitions were requested and add them to the queue
-        for(int i=0; i < goToEmotionList.Count; i++)
+        for (int i=0; i < goToEmotionList.Count; i++)
         {
             if(goToEmotionList[i].goToEmotion) 
             {
@@ -274,8 +280,8 @@ public class PlayablesPrototypeV2 : MonoBehaviour
                     // Linear, Cubic B-Spline, Cardinal Spline: https://www.researchgate.net/publication/44250675_Parametric_Facial_Expression_Synthesis_and_Animation
                     // Best Bezier explanation ever: https://denisrizov.com/2016/06/02/bezier-curves-unity-package-included/
                     t = mu;
-                    float p1 = 2.0f;
-                    float p2 = -1.0f;
+                    float p1 = 0.7f;            
+                    float p2 = 0.3f;
 
                     float u = 1f - t;
                     float t2 = t * t;
@@ -326,7 +332,6 @@ public class PlayablesPrototypeV2 : MonoBehaviour
             }
             normalize = true;
         }
-        // END REWORK
 
 
         // Play main emotion slightly before transition ends to avoid the 1 "neutral" frame that occurs when using "isDone()"
@@ -392,12 +397,11 @@ public class PlayablesPrototypeV2 : MonoBehaviour
 
         }
 
-
-
         // If weights were changed, normalize them
         if (normalize) normalizeWeights();
 
-        //addInTPoseIfNecessary();
+        if (HACKFixStuckBlendshapes)
+            animator.runtimeAnimatorController = runtimeAnimController;     
 
         //Debug.Log("Happy Wieght: " + mixerEmotionPlayable.GetInputWeight(0));
         //Debug.Log("Angry Wieght: " + mixerEmotionPlayable.GetInputWeight(2));
@@ -406,7 +410,7 @@ public class PlayablesPrototypeV2 : MonoBehaviour
 
 
     // Normalize Weights in mixerEmotionPlayable
-    void normalizeWeights()
+    private void normalizeWeights()
     {
         int length = mixerEmotionPlayable.GetInputCount();
         float sumOfWeights = 0;
@@ -424,26 +428,8 @@ public class PlayablesPrototypeV2 : MonoBehaviour
         normalize = false;
     }
 
-    /* // Hopefully unnecessary
-    void addInTPoseIfNecessary()
-    {
-        float weightSum = 0;
-        for (int i = 0; i < mixerEmotionPlayable.GetInputCount(); i++)
-        {
-            weightSum += mixerEmotionPlayable.GetInputWeight(i);
-        }
-        if (weightSum < 1f)
-        {
-            mixerEmotionPlayable.SetInputWeight((int)PlayablesEnum.TPose, 1f - weightSum);
-        }
-    }
-    */
-
     /*
-     * Updates the emotions used by this class,
-     * by comparing existing emotions to new emotions.
-     * New ones are added, missing ones are removed.
-     * Used by the Controller.
+     * Used by PlayablesPrototypeV2 Controller to assign new emotions and remove old ones.
      */
     public void updateEmotionList(List<string> newEmotions)
     {
@@ -470,9 +456,7 @@ public class PlayablesPrototypeV2 : MonoBehaviour
                 i--;
             }
         }
-
-
-
+        
         goToEmotionList = new List<StringBool>();
         foreach (string emotion in newEmotions)
         {
@@ -480,13 +464,72 @@ public class PlayablesPrototypeV2 : MonoBehaviour
         }
     }
 
+
+    /*
+     * Adds a new emotion to the transition queue.
+     * Input nextEmotion: The emotion that will be transitioned to.
+     * Return: Returns true if emotion was added to the transition queue, else false.
+     */
+    public bool playEmotion(string nextEmotion)
+    {
+        for (int i = 0; i < goToEmotionList.Count; i++)
+        {
+            if (goToEmotionList[i].name.Equals(nextEmotion))
+            {
+                goToEmotionNext.Enqueue(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * Getter and Setter
+     */ 
+    public AvatarMask getAvatarMask()
+    {
+        return headMask;
+    }
+    public void setAvatarMask(AvatarMask avatarMask)
+    {
+        headMask = avatarMask;
+    }
+    public interpolationENUM getInterpolationMode()
+    {
+        return interpolationMode;
+    }
+    public void setInterpolationMode(interpolationENUM interpol)
+    {
+        interpolationMode = interpol;
+    }
+    public bool getHACKFixStuckBlendshapes()
+    {
+        return HACKFixStuckBlendshapes;
+    }
+    public void setHACKFIXStuckBlendshapes(bool setTo)
+    {
+        HACKFixStuckBlendshapes = setTo;
+    }
+    
     void OnDisable()
     {
-
         // Destroys all Playables and PlayableOutputs created by the graph.
-
         playableGraph.Destroy();
-
     }
 }
 
+/*
+ * A helper class to properly display GoTo options in the editor
+ */
+[System.Serializable]
+public class StringBool
+{
+    public string name;
+    public bool goToEmotion;
+
+    public StringBool(string name, bool goToEmotion)
+    {
+        this.name = name;
+        this.goToEmotion = goToEmotion;
+    }
+}

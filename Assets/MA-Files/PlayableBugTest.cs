@@ -9,6 +9,7 @@ public class PlayableBugTest : MonoBehaviour {
     public bool GoToHappy;
     public bool GoToAngry;
     public GameObject childwithSkinnedMeshRenderer;
+    public AvatarMask headMask;
 
     public AnimationClip happy;
     public AnimationClip angry;
@@ -37,9 +38,24 @@ public class PlayableBugTest : MonoBehaviour {
         playableGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
         var playableOutput = AnimationPlayableOutput.Create(playableGraph, "Animation", animator);
 
+        // Create Top Level Layer Mixer
+        AnimationLayerMixerPlayable mixerLayerPlayable = AnimationLayerMixerPlayable.Create(playableGraph, 2);
+        playableOutput.SetSourcePlayable(mixerLayerPlayable);
+
+        // Wrap AnimController
+        runtimeAnimController = animator.runtimeAnimatorController;
+        var runtimeAnimControllerPlayable = AnimatorControllerPlayable.Create(playableGraph, runtimeAnimController);
+
         // Create an Emotion Mixer
         mixerEmotionPlayable = AnimationMixerPlayable.Create(playableGraph, 4);
-        playableOutput.SetSourcePlayable(mixerEmotionPlayable);
+        //playableOutput.SetSourcePlayable(mixerEmotionPlayable);
+
+        // Connect to Top Level Layer Mixer
+        playableGraph.Connect(runtimeAnimControllerPlayable, 0, mixerLayerPlayable, 0);
+        playableGraph.Connect(mixerEmotionPlayable, 0, mixerLayerPlayable, 1);
+        mixerLayerPlayable.SetInputWeight(0, 1.0f);
+        mixerLayerPlayable.SetInputWeight(1, 1.0f);
+        mixerLayerPlayable.SetLayerMaskFromAvatarMask(1, headMask);
 
         // Wrap the clips in a playable
         pHappy = AnimationClipPlayable.Create(playableGraph, happy);
@@ -50,13 +66,13 @@ public class PlayableBugTest : MonoBehaviour {
         playableGraph.Connect(pHappy, 0, mixerEmotionPlayable, 0);
         playableGraph.Connect(pAngry, 0, mixerEmotionPlayable, 1);
 
-
         // Plays the Graph
         playableGraph.Play();
     }
 	
 	// Update is called once per frame
 	void Update () {
+        animator.runtimeAnimatorController = null;
 		if(GoToHappy)
         {
             for(int i=0; i < blendShapeCount; i++)
@@ -76,9 +92,10 @@ public class PlayableBugTest : MonoBehaviour {
             mixerEmotionPlayable.SetInputWeight(0, 0.00f);
             mixerEmotionPlayable.SetInputWeight(1, 1.0f);
         }
-        Debug.Log("Happy Wieght: " + mixerEmotionPlayable.GetInputWeight(0));
-        Debug.Log("Angry Wieght: " + mixerEmotionPlayable.GetInputWeight(1));
+        //Debug.Log("Happy Wieght: " + mixerEmotionPlayable.GetInputWeight(0));
+        //Debug.Log("Angry Wieght: " + mixerEmotionPlayable.GetInputWeight(1));
 
+        animator.runtimeAnimatorController = runtimeAnimController;
     }
 
 

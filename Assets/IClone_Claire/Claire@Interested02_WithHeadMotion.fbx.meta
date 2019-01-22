@@ -353,7 +353,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Interested02_WithHeadMotionTransitionIn
       takeName: Take 001
-      firstFrame: 0
+      firstFrame: 28
       lastFrame: 126
       wrapMode: 0
       orientationOffsetY: 0
